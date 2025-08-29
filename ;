@@ -1,0 +1,26 @@
+import { NextFunction, Request, Response } from "express";
+import { TransactionUseCase } from "../../../../application/use-cases/transaction.usecase";
+import { TransactionMapper } from "../../../mappers/transaction/transaction.mapper";
+import { transactionValidator } from "../../validators/transaction/transaction.validator";
+import { createLogger } from "../../../logger";
+
+export class TransactionController {
+  private readonly logger = createLogger();
+  constructor(
+    private readonly transactionUseCase: TransactionUseCase,
+    private readonly transactionMapper: TransactionMapper
+  ) { }
+
+  createTransaction = async (request: Request, response: Response, next: NextFunction) => {
+    try {
+      const { body } = request
+      const validation = transactionValidator.validate(body);
+      if (validation.error) {
+      }
+
+    } catch (e: unknown) {
+      next(e)
+    }
+  }
+
+}
