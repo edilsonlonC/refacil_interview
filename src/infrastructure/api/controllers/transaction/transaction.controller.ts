@@ -32,6 +32,7 @@ export class TransactionController {
         this.transactionMapper.createDtoToModel(transactionDto),
       );
       const transactionResponse: TransactionResponseDto = this.transactionMapper.modelToResponseDto(transaction!);
+      this.logger.info('Transaction Created');
       return response.status(StatusCodes.CREATED).json({
         transaction: transactionResponse,
       });

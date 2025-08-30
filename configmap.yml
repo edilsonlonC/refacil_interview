@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: db-config
+data:
+  DB_HOST: postgres   # nombre del servicio del StatefulSet de Postgres
+  DB_PORT: "5432"     # usa el puerto interno del contenedor
