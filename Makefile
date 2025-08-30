@@ -14,3 +14,17 @@ run-database-test:
 down-database-test:
 	docker compose  -f docker-compose-test.yml down db_test 
 
+start-minikube:
+	minikube start
+load-image:
+	minikube image load refacil-app:latest
+build-kubernetes:
+	 docker build -t refacil-app:latest .
+	$(MAKE) start-minikube
+	$(MAKE) load-image
+	kubectl apply -f configmap.yml -f postgres-secret.yml -f deployment.yml
+
+
+
+
+
