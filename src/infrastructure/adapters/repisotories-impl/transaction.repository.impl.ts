@@ -13,6 +13,15 @@ export class TransactionRepositoryImpl implements TransactionRepository {
   ) {
     this.transactionRepository = this.dataSource.getRepository(TransactionEntity);
   }
+  async getTransactionsByUserId(userId: string): Promise<TransactionModel[]> {
+    const transactions: TransactionEntity[] | null = await this.transactionRepository.find({
+      where: { userId },
+    });
+    return transactions.map((transactionEntity: TransactionEntity) =>
+      this.transactionMapper.entityToModel(transactionEntity),
+    );
+  }
+
   async getTransactionById(id: string): Promise<TransactionModel | null> {
     const transactionEntity: TransactionEntity | null = await this.transactionRepository.findOne({
       where: { transactionId: id },

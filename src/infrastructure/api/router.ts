@@ -14,6 +14,9 @@ import { UserTransactionUseCase } from '../../application/use-cases/user.transac
 import { TransactionController } from './controllers/transaction/transaction.controller';
 import { RepositoryFactory, UnitOfWork } from '../../domain/ports/unit-of-work/unit.of.work';
 import { TypeOrmRepositoryFactory, TypeOrmUnitOfWork } from '../database/unit-of-work/typeorm.unit.of.work';
+import { TransactionRepositoryImpl } from '../adapters/repisotories-impl/transaction.repository.impl';
+import { TransactionRepository } from '../../domain/ports/repositories/transaction.repository';
+import { TransactionUseCase } from '../../application/use-cases/transaction.usecase';
 
 export const initRouter = async (): Promise<Router> => {
   // Database
@@ -24,7 +27,7 @@ export const initRouter = async (): Promise<Router> => {
   const transactionMapper: TransactionMapper = new TransactionMapper();
   // Repositories
   const userRepository: UserRepository = new UserRepositoryImpl(dataSource, userMapper);
-
+  const transactionRepository: TransactionRepository = new TransactionRepositoryImpl(dataSource, transactionMapper);
   // Hasher
   const hasher: Hasher = new BcryptHasher();
   // unit-of-work
@@ -33,17 +36,21 @@ export const initRouter = async (): Promise<Router> => {
   // use-cases
   const userUseCase: UserUseCase = new UserUseCase(userRepository, hasher);
   const userTransactionUseCase: UserTransactionUseCase = new UserTransactionUseCase(unitOfWork, repositoryFactory);
+  const transactionUseCase: TransactionUseCase = new TransactionUseCase(transactionRepository);
 
   // Controllers
   const healthController = new HealthController();
   const userController: UserController = new UserController(userUseCase, userMapper);
   const transactionController: TransactionController = new TransactionController(
     userTransactionUseCase,
+    transactionUseCase,
     transactionMapper,
   );
   const router = express.Router();
   router.get('/health', healthController.getHealth);
   router.post('/user', userController.createUser);
+  router.get('/user/:id', userController.getUserById);
   router.post('/transaction', transactionController.createTransaction);
+  router.get('/transaction/:userId', transactionController.getTransactionsByUserId);
   return router;
 };

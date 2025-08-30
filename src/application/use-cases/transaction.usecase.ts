@@ -6,4 +6,7 @@ export class TransactionUseCase {
   async createTransaction(transaction: TransactionModel): Promise<TransactionModel> {
     return this.transactionRepository.createTransaction(transaction);
   }
+  async getTransactionsByUserId(userId: string): Promise<TransactionModel[]> {
+    return this.transactionRepository.getTransactionsByUserId(userId);
+  }
 }
