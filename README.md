@@ -103,8 +103,8 @@ La API estará disponible en `http://localhost:3000`.
   - **Respuesta Exitosa (200 OK)**:
     ```json
     {
-      "status": "ok",
-      "messag": "2024-08-30T12:00:00.000Z"
+      "status": "OK",
+      "ok": true
     }
     ```
 
