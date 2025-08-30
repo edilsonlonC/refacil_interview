@@ -1,4 +1,4 @@
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, EntityManager, Repository } from 'typeorm';
 import { TransactionModel } from '../../../domain/models/transaction.model';
 import { TransactionRepository } from '../../../domain/ports/repositories/transaction.repository';
 import { TransactionEntity } from '../../database/entities/transaction.entity';
@@ -9,6 +9,7 @@ export class TransactionRepositoryImpl implements TransactionRepository {
   constructor(
     private readonly dataSource: DataSource,
     private readonly transactionMapper: TransactionMapper,
+    private readonly manager?: EntityManager,
   ) {
     this.transactionRepository = this.dataSource.getRepository(TransactionEntity);
   }
@@ -20,8 +21,9 @@ export class TransactionRepositoryImpl implements TransactionRepository {
   }
 
   async createTransaction(transaction: TransactionModel): Promise<TransactionModel> {
-    return this.transactionMapper.entityToModel(
-      await this.transactionRepository.save(this.transactionMapper.modelToEntity(transaction)),
+    const transactionEntity: TransactionEntity | undefined = await this.manager?.save(
+      this.transactionMapper.modelToEntity(transaction),
     );
+    return this.transactionMapper.entityToModel(transactionEntity!);
   }
 }

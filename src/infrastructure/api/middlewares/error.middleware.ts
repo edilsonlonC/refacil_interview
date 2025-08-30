@@ -3,12 +3,13 @@ import { badRequest, HttpError, internalServerError } from '../errors';
 import { createLogger } from '../../logger';
 import { EntityExistError } from '../../../domain/errors/entity.exist.error';
 import { EntityNotFoundError } from '../../../domain/errors/entity.not.found.error';
+import { EntityBalanceError } from '../../../domain/errors/entity.balance.error';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const errorMiddleware = (err: HttpError | Error, _: Request, res: Response, __: NextFunction) => {
   const logger = createLogger();
   logger.error(err);
-  if (err instanceof EntityExistError || err instanceof EntityNotFoundError) {
+  if (err instanceof EntityExistError || err instanceof EntityNotFoundError || err instanceof EntityBalanceError) {
     const badRequestError = badRequest(err.message);
     return res.status(badRequestError.statusCode).json(badRequestError);
   }

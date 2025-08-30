@@ -10,7 +10,7 @@ export default new DataSource({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   synchronize: false,
-  logging: process.env.NODE_ENV === 'development',
+  logging: false,
   entities: [__dirname + '/entities/*'],
   migrations: [__dirname + '/migrations/*'],
 });

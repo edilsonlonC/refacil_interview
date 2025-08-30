@@ -13,6 +13,7 @@ export const userMockGenerator = async (): Promise<UserEntity> => {
   userEntity.name = faker.person.firstName();
   userEntity.email = faker.internet.email().toLowerCase();
   userEntity.password = passwordHash;
+  userEntity.balance = 100;
   const userMock: UserEntity = await mockGenerator<UserEntity>(userEntity);
   userMock.password = passwordPlain;
   return userMock;

@@ -10,11 +10,10 @@ import { UserController } from './controllers/user/user.controller';
 import { BcryptHasher } from '../adapters/hasher/bcrypt.hasher';
 import { Hasher } from '../../domain/ports/hasher/hasher';
 import { TransactionMapper } from '../mappers/transaction/transaction.mapper';
-import { TransactionRepository } from '../../domain/ports/repositories/transaction.repository';
-import { TransactionRepositoryImpl } from '../adapters/repisotories-impl/transaction.repository.impl';
-import { TransactionUseCase } from '../../application/use-cases/transaction.usecase';
 import { UserTransactionUseCase } from '../../application/use-cases/user.transaction.usecase';
 import { TransactionController } from './controllers/transaction/transaction.controller';
+import { RepositoryFactory, UnitOfWork } from '../../domain/ports/unit-of-work/unit.of.work';
+import { TypeOrmRepositoryFactory, TypeOrmUnitOfWork } from '../database/unit-of-work/typeorm.unit.of.work';
 
 export const initRouter = async (): Promise<Router> => {
   // Database
@@ -25,13 +24,15 @@ export const initRouter = async (): Promise<Router> => {
   const transactionMapper: TransactionMapper = new TransactionMapper();
   // Repositories
   const userRepository: UserRepository = new UserRepositoryImpl(dataSource, userMapper);
-  const transactionRepository: TransactionRepository = new TransactionRepositoryImpl(dataSource, transactionMapper);
+
   // Hasher
   const hasher: Hasher = new BcryptHasher();
+  // unit-of-work
+  const unitOfWork: UnitOfWork = new TypeOrmUnitOfWork(dataSource, transactionMapper, userMapper);
+  const repositoryFactory: RepositoryFactory = new TypeOrmRepositoryFactory(dataSource, transactionMapper, userMapper);
   // use-cases
   const userUseCase: UserUseCase = new UserUseCase(userRepository, hasher);
-  const transactionUseCase: TransactionUseCase = new TransactionUseCase(transactionRepository);
-  const userTransactionUseCase: UserTransactionUseCase = new UserTransactionUseCase(userUseCase, transactionUseCase);
+  const userTransactionUseCase: UserTransactionUseCase = new UserTransactionUseCase(unitOfWork, repositoryFactory);
 
   // Controllers
   const healthController = new HealthController();

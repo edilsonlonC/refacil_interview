@@ -7,6 +7,7 @@ import { TransactionCreateDto } from '../../../DTOs/transaction/transaction.crea
 import { TransactionResponseDto } from '../../../DTOs/transaction/transaction.response.dto';
 import { StatusCodes } from 'http-status-codes';
 import { UserTransactionUseCase } from '../../../../application/use-cases/user.transaction.usecase';
+import { TransactionModel } from '../../../../domain/models/transaction.model';
 
 export class TransactionController {
   private readonly logger = createLogger();
@@ -24,9 +25,10 @@ export class TransactionController {
         throw badRequest(validation.error.message);
       }
       const transactionDto: TransactionCreateDto = new TransactionCreateDto(body.userId, body.amount, body.type);
-      const transactionResponse: TransactionResponseDto = this.transactionMapper.modelToResponseDto(
-        await this.userTransactionUseCase.createTransaction(this.transactionMapper.createDtoToModel(transactionDto)),
+      const transaction: TransactionModel | undefined = await this.userTransactionUseCase.createTransaction(
+        this.transactionMapper.createDtoToModel(transactionDto),
       );
+      const transactionResponse: TransactionResponseDto = this.transactionMapper.modelToResponseDto(transaction!);
       return response.status(StatusCodes.CREATED).json({
         transaction: transactionResponse,
       });
