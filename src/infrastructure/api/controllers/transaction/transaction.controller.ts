@@ -8,11 +8,14 @@ import { TransactionResponseDto } from '../../../DTOs/transaction/transaction.re
 import { StatusCodes } from 'http-status-codes';
 import { UserTransactionUseCase } from '../../../../application/use-cases/user.transaction.usecase';
 import { TransactionModel } from '../../../../domain/models/transaction.model';
+import { TransactionUseCase } from '../../../../application/use-cases/transaction.usecase';
+import { transactionParamsValidator } from '../../validators/params/params.validator';
 
 export class TransactionController {
   private readonly logger = createLogger();
   constructor(
     private readonly userTransactionUseCase: UserTransactionUseCase,
+    private readonly transactionUseCase: TransactionUseCase,
     private readonly transactionMapper: TransactionMapper,
   ) {}
 
@@ -31,6 +34,22 @@ export class TransactionController {
       const transactionResponse: TransactionResponseDto = this.transactionMapper.modelToResponseDto(transaction!);
       return response.status(StatusCodes.CREATED).json({
         transaction: transactionResponse,
+      });
+    } catch (e: unknown) {
+      next(e);
+    }
+  };
+  getTransactionsByUserId = async (request: Request, response: Response, next: NextFunction) => {
+    try {
+      const validation = transactionParamsValidator.validate(request.params);
+      if (validation.error) throw badRequest(validation.error.message);
+      const { userId } = request.params;
+      const transactions: TransactionModel[] = await this.transactionUseCase.getTransactionsByUserId(userId);
+      const transactionReponse: TransactionResponseDto[] = transactions.map((transaction: TransactionModel) =>
+        this.transactionMapper.modelToResponseDto(transaction),
+      );
+      return response.status(StatusCodes.OK).json({
+        transactions: transactionReponse,
       });
     } catch (e: unknown) {
       next(e);

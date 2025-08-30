@@ -61,7 +61,15 @@ describe('#User controller', () => {
     expect(response.body.statusCode).toBe(StatusCodes.BAD_REQUEST);
     expect(response.body.statusMessage).toBe(getReasonPhrase(StatusCodes.BAD_REQUEST));
   });
-
-
+  it('should return 200 when get user by id', async () => {
+    const userEntity: UserEntity = await userMockGenerator();
+    const response = await request.get(url + '/' + userEntity.id);
+    expect(response.status).toBe(StatusCodes.OK);
+    const user = response.body.user;
+    expect(user.id).toBe(userEntity.id);
+    expect(user.name).toBe(userEntity.name);
+    expect(user.email).toBe(userEntity.email);
+    expect(user.balance).toBe(userEntity.balance);
+  });
 
 });

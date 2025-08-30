@@ -11,6 +11,7 @@ import { initDataSource } from "../../../../../../src/infrastructure/database";
 import { DataSource, Repository } from "typeorm";
 import { TransactionEntity } from "../../../../../../src/infrastructure/database/entities/transaction.entity";
 import { faker } from "@faker-js/faker";
+import { transactionMockGenerator } from "../../../../../mock-generator/transaction.mock.generator";
 
 
 describe('#Transaction controller', () => {
@@ -126,5 +127,16 @@ describe('#Transaction controller', () => {
     expect(response.body.message).toBe('userId.must.be.a.valid.uuid');
     expect(response.body.statusCode).toBe(400);
     expect(response.body.statusMessage).toBe('Bad Request');
+  });
+  it('should return 200 and get transactions by userId', async () => {
+    const userEntity: UserEntity = await userMockGenerator();
+    const transactionEntity: TransactionEntity = await transactionMockGenerator(userEntity.id);
+    const response = await request.get(url + '/' + transactionEntity.userId);
+    expect(response.status).toBe(200);
+    const transactions = response.body.transactions;
+    expect(transactions.length).toBe(1);
+    expect(transactions[0].userId).toBe(userEntity.id);
+    expect(transactions[0].amount).toBe(transactionEntity.amount);
+    expect(transactions[0].type).toBe(transactionEntity.type);
   });
 });
