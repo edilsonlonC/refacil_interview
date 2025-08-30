@@ -6,9 +6,11 @@ import { TransactionRepository } from '../../domain/ports/repositories/transacti
 import { UserRepository } from '../../domain/ports/repositories/user.repository';
 import { RepositoryFactory, UnitOfWork } from '../../domain/ports/unit-of-work/unit.of.work';
 import { createLogger } from '../../infrastructure/logger';
+import { transactionIsTooClose } from '../utils/utils';
 
 export class UserTransactionUseCase {
   private readonly logger = createLogger();
+  private readonly name = 'UserTransactionUseCase';
   constructor(
     private readonly unitOfWork: UnitOfWork,
     private readonly repositoryFactory: RepositoryFactory,
@@ -22,6 +24,19 @@ export class UserTransactionUseCase {
       );
       const userRepository: UserRepository = this.repositoryFactory.getUserRepository(this.unitOfWork.getManager());
       const user: UserModel | null = await userRepository.getUserById(transactionModel.getUserId());
+      const lastTransaction: TransactionModel | null = await transactionRepository.getLastTransactionByUserId(
+        transactionModel.getUserId(),
+      );
+      if (lastTransaction) {
+        if (transactionIsTooClose(lastTransaction.getTimestamp()!)) {
+          this.logger.info({
+            lastTransactionId: lastTransaction.getTransactionId(),
+            userId: lastTransaction.getUserId(),
+            message: 'Transaction is too close to the last one',
+            name: this.name,
+          });
+        }
+      }
       if (!user) throw new EntityNotFoundError('user.not.found');
       const transaction: TransactionModel = await transactionRepository.createTransaction(transactionModel);
       let newBalance = 0;
@@ -36,7 +51,13 @@ export class UserTransactionUseCase {
       }
       await userRepository.updateBalance(transactionModel.getUserId(), newBalance);
       await this.unitOfWork.commit();
-      this.logger.info(`Transaction created with id: ${transaction.getTransactionId()}`);
+      this.logger.info({
+        transactionId: transaction.getTransactionId(),
+        userId: transaction.getUserId(),
+        type: transaction.getType(),
+        message: 'Transaction created',
+        name: this.name,
+      });
       return transaction;
     } catch (e: unknown) {
       await this.unitOfWork.rollback();

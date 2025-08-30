@@ -3,8 +3,11 @@ import { EntityNotFoundError } from '../../domain/errors/entity.not.found.error'
 import { UserModel } from '../../domain/models/user.model';
 import { Hasher } from '../../domain/ports/hasher/hasher';
 import { UserRepository } from '../../domain/ports/repositories/user.repository';
+import { createLogger } from '../../infrastructure/logger';
 
 export class UserUseCase {
+  private readonly name = 'UserUseCase';
+  private readonly logger = createLogger();
   constructor(
     private readonly userRepository: UserRepository,
     private readonly hasher: Hasher,
@@ -13,6 +16,12 @@ export class UserUseCase {
     const userExist: UserModel | null = await this.userRepository.findByEmail(user.getEmail());
     if (userExist) throw new EntityExistError('user.already.exist');
     user.setPassword(await this.hasher.hash(user.getPassword()!));
+    this.logger.info({
+      email: user.getEmail(),
+      id: user.getId(),
+      message: 'User created',
+      name: this.name,
+    });
     return this.userRepository.createUser(user);
   }
   async findById(id: string): Promise<UserModel> {

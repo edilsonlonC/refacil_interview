@@ -35,4 +35,11 @@ export class TransactionRepositoryImpl implements TransactionRepository {
     );
     return this.transactionMapper.entityToModel(transactionEntity!);
   }
+  async getLastTransactionByUserId(userId: string): Promise<TransactionModel | null> {
+    const transactionEntity: TransactionEntity | null = await this.transactionRepository.findOne({
+      where: { userId },
+      order: { timestamp: 'DESC' },
+    });
+    return transactionEntity ? this.transactionMapper.entityToModel(transactionEntity) : null;
+  }
 }
