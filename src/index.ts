@@ -1,14 +1,6 @@
-import express, { Application } from 'express';
-import { createLogger } from './infrastructure/logger';
+import { httpServer } from './infrastructure/api/server';
 
-export const initApp = async () => {
-  const app: Application = express();
-  app.get('/', (req, res) => {
-    res.send('Hello World');
-  });
-  app.listen(3001, () => {
-    const logger = createLogger();
-    logger.info('Server started');
-  });
+const initApplication = async () => {
+  await httpServer();
 };
-initApp();
+initApplication();
