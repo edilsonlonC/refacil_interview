@@ -41,17 +41,7 @@ cp .env.example .env
 
 Abre el archivo `.env` y añade las siguientes variables necesarias para la conexión a la base de datos y la configuración de la aplicación. Asegúrate de que coincidan con las credenciales de tu base de datos definidas en `docker-compose.yml`.
 
-```env
-# Aplicación
-PORT=3000
 
-# Base de Datos
-DB_HOST=localhost
-DB_PORT=5432
-DB_USERNAME=postgres
-DB_PASSWORD=postgres
-DB_NAME=refacil
-```
 
 ### 3. Instalar Dependencias
 
