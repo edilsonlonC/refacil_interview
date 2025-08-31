@@ -147,3 +147,31 @@ El proyecto sigue una Arquitectura Limpia con tres capas principales:
 - `src/domain`: Contiene los modelos de negocio, interfaces (puertos) y errores de dominio. Es el núcleo de la aplicación y no depende de ninguna capa externa.
 - `src/application`: Contiene los casos de uso que orquestan la lógica de negocio. Depende únicamente de la capa de dominio.
 - `src/infrastructure`: Contiene las implementaciones concretas de los puertos definidos en el dominio, como los controladores de la API, los repositorios de base de datos (TypeORM), y otros servicios externos.
+
+## Respuestas a Preguntas Técnicas
+
+### 1. ¿Cómo manejarías picos altos de transacciones para garantizar escalabilidad?
+
+- **Implementar colas de mensajería:** Para comunicación asíncrona, reduciendo las requests directas entre componentes y distribuyendo la carga. Es crucial evaluar si esta arquitectura se alinea con las necesidades técnicas del sistema.
+- **Auto-scaling:** Configurar el auto-escalado en los microservicios que experimentan un alto flujo de peticiones para ajustar dinámicamente los recursos.
+- **Caché:** Utilizar herramientas como Redis para almacenar en caché los datos de lectura frecuente, disminuyendo la carga sobre la base de datos.
+- **Observabilidad:** Implementar un sistema de monitoreo y observabilidad para supervisar las métricas de rendimiento de los componentes (CPU, RAM, etc.).
+- **Circuit Breakers:** Introducir patrones de circuit breaker para prevenir la saturación de servicios y mitigar el impacto de fallos en cascada.
+
+### 2. ¿Qué estrategias usarías para prevenir fraudes en un sistema de billetera digital?
+
+- **Logs y Alertas:** Generar logs detallados y configurar alertas para actividades sospechosas, tales como:
+    - Transacciones fuera de horarios habituales.
+    - Múltiples transacciones en un corto período.
+    - Transacciones de montos inusualmente altos precedidas por montos bajos.
+    - Repetidos intentos fallidos de transacción.
+- **Encriptación de Datos Sensibles:** Cifrar información crítica, como los datos de tarjetas, siguiendo los estándares de seguridad de la industria (ej. PCI DSS).
+
+### 3. Si detectas lentitud en el procesamiento de transacciones por alta concurrencia, ¿cómo procederías para mejorar el rendimiento?
+
+1.  **Identificar el Cuello de Botella:**
+    - **Análisis de Métricas:** Utilizar las métricas de observabilidad para identificar anomalías en el uso de recursos (CPU, RAM) en los diferentes componentes.
+    - **Optimización de Base de Datos:** Analizar el rendimiento de las queries, asegurar el uso correcto de índices y optimizar consultas lentas.
+2.  **Desacoplar Dependencias Externas:**
+    - **Verificar Servicios de Terceros:** Evaluar los tiempos de respuesta de las APIs y servicios externos.
+    - **Implementar Timeouts:** Configurar timeouts para evitar que la aplicación quede bloqueada esperando respuestas de servicios lentos.
