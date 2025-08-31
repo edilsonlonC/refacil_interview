@@ -43,12 +43,12 @@ Abre el archivo `.env` y añade las siguientes variables necesarias para la cone
 
 ```env
 # Aplicación
-PORT=3000
+PORT=3001
 
 # Base de Datos
 DB_HOST=localhost
 DB_PORT=5432
-DB_USERNAME=postgres
+DB_USER=postgres
 DB_PASSWORD=postgres
 DB_NAME=refacil
 ```
