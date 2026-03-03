@@ -3,9 +3,9 @@ import { RepositoryFactory, UnitOfWork } from '../../../domain/ports/unit-of-wor
 import { TransactionRepository } from '../../../domain/ports/repositories/transaction.repository';
 import { TransactionMapper } from '../../mappers/transaction/transaction.mapper';
 import { UserMapper } from '../../mappers/user/user.mapper';
-import { TransactionRepositoryImpl } from '../../adapters/repisotories-impl/transaction.repository.impl';
+import { TransactionRepositoryImpl } from '../../adapters/repositories-impl/transaction.repository.impl';
 import { UserRepository } from '../../../domain/ports/repositories/user.repository';
-import { UserRepositoryImpl } from '../../adapters/repisotories-impl/user.repository.impl';
+import { UserRepositoryImpl } from '../../adapters/repositories-impl/user.repository.impl';
 import { createLogger } from '../../logger';
 
 export class TypeOrmRepositoryFactory implements RepositoryFactory {

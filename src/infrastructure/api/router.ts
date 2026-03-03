@@ -3,7 +3,7 @@ import { HealthController } from './controllers/health/health.controller';
 import { DataSource } from 'typeorm';
 import { initDataSource } from '../database';
 import { UserRepository } from '../../domain/ports/repositories/user.repository';
-import { UserRepositoryImpl } from '../adapters/repisotories-impl/user.repository.impl';
+import { UserRepositoryImpl } from '../adapters/repositories-impl/user.repository.impl';
 import { UserMapper } from '../mappers/user/user.mapper';
 import { UserUseCase } from '../../application/use-cases/user.usecase';
 import { UserController } from './controllers/user/user.controller';
@@ -14,7 +14,7 @@ import { UserTransactionUseCase } from '../../application/use-cases/user.transac
 import { TransactionController } from './controllers/transaction/transaction.controller';
 import { RepositoryFactory, UnitOfWork } from '../../domain/ports/unit-of-work/unit.of.work';
 import { TypeOrmRepositoryFactory, TypeOrmUnitOfWork } from '../database/unit-of-work/typeorm.unit.of.work';
-import { TransactionRepositoryImpl } from '../adapters/repisotories-impl/transaction.repository.impl';
+import { TransactionRepositoryImpl } from '../adapters/repositories-impl/transaction.repository.impl';
 import { TransactionRepository } from '../../domain/ports/repositories/transaction.repository';
 import { TransactionUseCase } from '../../application/use-cases/transaction.usecase';
 
